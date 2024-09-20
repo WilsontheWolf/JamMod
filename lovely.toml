@@ -1,0 +1,28 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 0
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''function Card:get_id()'''
+position = "after"
+payload = '''
+if next(find_joker("j_jammod_double_vision")) then
+    return 2
+end
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''function Card:is_face(from_boss)'''
+position = "after"
+payload = '''
+if next(find_joker("j_jammod_prosopagnosia")) then
+    return false
+end
+'''
+match_indent = true
