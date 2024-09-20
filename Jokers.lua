@@ -1,10 +1,10 @@
 --- STEAMODDED HEADER
 --- MOD_NAME: JamMod
 --- MOD_ID: JamMod
---- MOD_AUTHOR: []
+--- MOD_AUTHOR: [WilsontheWolf]
 --- MOD_DESCRIPTION: JellyMod for modern SMODS
 --- DEPENDENCIES: [Steamodded>=1.0.0~ALPHA-0919a]
---- PREFIX: jammod
+--- PREFIX: jam
 if JokerDisplay then
     assert(SMODS.load_file("joker_display_definitions.lua"))()
 end
@@ -85,7 +85,7 @@ SMODS.Joker {
         if #eligible == 0 then
           return nil, true
         end
-        local eligible_card = pseudorandom_element(eligible, pseudoseed("jammod_pessimist"))
+        local eligible_card = pseudorandom_element(eligible, pseudoseed("jam_pessimist"))
         eligible_card:set_edition({negative = true}, true)
         G.hand:change_size(-card.ability.extra)
         return nil, true
@@ -107,6 +107,38 @@ SMODS.Joker {
         config = {extra = 1}
       }
       return { vars = { center.ability.extra } }
+    end,
+    blueprint_compat = true
+}
+
+SMODS.Joker {
+    key = 'one_more_time',
+    config = {
+        extra = 0
+    },
+    loc_txt = {
+        name = "One More Time!",
+        text = {
+          "Sell this card to",
+          "Add your previous hand to current score",
+          "(Currently {C:blue,E:1,S:1}#1#{})",
+        },    
+    },
+    atlas = 'Jokers',
+    pos = {
+        x = 0,
+        y = 0
+    },
+    rarity = 1,
+    cost = 8,
+    calculate = function(self, card, context)
+      if context.selling_self and G.STATE == G.STATES.SELECTING_HAND then
+        G.GAME.chips = G.GAME.chips + G.GAME.round_resets.jam_last_chips or 0
+        return nil, true
+      end
+    end,
+    loc_vars = function(self, info_queue, card)
+      return { vars = { G.GAME.round_resets.jam_last_chips or 0 } }
     end,
     blueprint_compat = true
 }

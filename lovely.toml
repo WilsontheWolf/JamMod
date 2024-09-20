@@ -9,7 +9,7 @@ target = "card.lua"
 pattern = '''function Card:get_id()'''
 position = "after"
 payload = '''
-if next(find_joker("j_jammod_double_vision")) then
+if next(find_joker("j_jam_double_vision")) then
     return 2
 end
 '''
@@ -21,8 +21,18 @@ target = "card.lua"
 pattern = '''function Card:is_face(from_boss)'''
 position = "after"
 payload = '''
-if next(find_joker("j_jammod_prosopagnosia")) then
+if next(find_joker("j_jam_prosopagnosia")) then
     return false
 end
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''if hand_chips*mult > 0 then'''
+position = "before"
+payload = '''
+G.GAME.round_resets.jam_last_chips = math.floor(hand_chips*mult)
 '''
 match_indent = true
