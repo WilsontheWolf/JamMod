@@ -133,7 +133,32 @@ SMODS.Joker {
     cost = 8,
     calculate = function(self, card, context)
       if context.selling_self and G.STATE == G.STATES.SELECTING_HAND then
-        G.GAME.chips = G.GAME.chips + G.GAME.round_resets.jam_last_chips or 0
+        G.E_MANAGER:add_event(Event({
+            func = function()
+                card_eval_status_text(card, 'extra', nil, nil, nil, {
+                  message = "+" .. number_format(G.GAME.round_resets.jam_last_chips or 0)
+                });
+                return true
+            end
+        }))
+
+        G.E_MANAGER:add_event(Event({
+          blocking = true,
+          trigger = 'ease',
+          ref_table = G.GAME,
+          ref_value = 'chips',
+          ease_to = G.GAME.chips + math.floor(G.GAME.round_resets.jam_last_chips or 0),
+          delay = 0.2,
+          func = (function(t) return math.floor(t) end)
+        }))
+
+        G.E_MANAGER:add_event(Event({
+          func = (function(t) if G.GAME.chips >  G.GAME.blind.chips then G.STATE = G.STATES.NEW_ROUND 
+          G.STATE_COMPLETE = false
+end
+          return true end)
+        }))
+        
         return nil, true
       end
     end,
