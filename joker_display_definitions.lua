@@ -13,6 +13,7 @@ jd_def["j_jam_one_more_time"] = {
     },
     text_config = { colour = G.C.WHITE },
     calc_function = function(card)
+        if G.STATE == G.STATES.HAND_PLAYED and card.joker_display_values.chips then return end -- Don't show the score before scoring is over
         card.joker_display_values.chips = G.GAME.round_resets.jam_last_chips or 0
     end
 }
