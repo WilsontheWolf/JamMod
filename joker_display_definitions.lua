@@ -17,3 +17,16 @@ jd_def["j_jam_one_more_time"] = {
         card.joker_display_values.chips = G.GAME.round_resets.jam_last_chips or 0
     end
 }
+jd_def["j_jam_tarlton"] = {}
+jd_def["j_jam_greedy_pot"] = {
+    text = {
+        { text = "+" },
+        { ref_table = "card.ability", ref_value = "extra" },
+    },
+    reminder_text = {
+        { text = "cards" },
+    },
+    text_config = { colour = G.C.IMPORTANT },
+}
+
+jd_def["j_jam_all_ones"] = {}

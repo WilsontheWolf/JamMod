@@ -121,7 +121,7 @@ SMODS.Joker {
         text = {
           "Sell this card to",
           "Add your previous hand to current score",
-          "(Currently {C:blue,E:1,S:1}#1#{})",
+          "(Currently {C:attention,E:1,S:1}#1#{})",
         },    
     },
     atlas = 'Jokers',
@@ -232,6 +232,37 @@ SMODS.Joker {
     cost = 10,
     loc_vars = function(self, info_queue, center)
       return { vars = { center.ability.extra } }
+    end,
+    blueprint_compat = false
+}
+
+SMODS.Joker {
+    key = 'all_ones',
+    loc_txt = {
+        name = 'Oops! All 1s',
+        text = {
+            "Halves all {C:attention}listed",
+            "{C:green,E:1,S:1.1}probabilities",
+            "{C:inactive}(ex: {C:green}1 in 3{C:inactive} -> {C:green}0.5 in 3{C:inactive})",
+        }
+    },
+    config = {extra = 2},
+    atlas = 'Jokers',
+    pos = {
+        x = 3,
+        y = 2
+    },
+    rarity = 3,
+    cost = 10,
+    add_to_deck = function (self, card, from_debuff)
+      for k, v in pairs(G.GAME.probabilities) do
+        G.GAME.probabilities[k] = v / 2
+      end
+    end,
+    remove_from_deck = function (self, card, from_debuff)
+      for k, v in pairs(G.GAME.probabilities) do
+        G.GAME.probabilities[k] = v * 2
+      end
     end,
     blueprint_compat = false
 }
