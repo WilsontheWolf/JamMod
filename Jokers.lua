@@ -29,7 +29,7 @@ SMODS.Joker {
     }
   },
   atlas = 'Jokers',
-  pos = { x = 0, y = 0 },
+  pos = { x = 8, y = 2 },
   rarity = 3,
   cost = 10,
   blueprint_compat = false
@@ -47,8 +47,8 @@ SMODS.Joker {
     },
     atlas = 'Jokers',
     pos = {
-      x = 0,
-      y = 0
+      x = 7,
+      y = 2
     },
     rarity = 1,
     cost = 5,
@@ -69,8 +69,8 @@ SMODS.Joker {
     },
     atlas = 'Jokers',
     pos = {
-        x = 0,
-        y = 0
+      x = 6,
+      y = 2
     },
     rarity = 3,
     cost = 10,
@@ -126,8 +126,8 @@ SMODS.Joker {
     },
     atlas = 'Jokers',
     pos = {
-        x = 0,
-        y = 0
+      x = 1,
+      y = 3
     },
     rarity = 1,
     cost = 8,
@@ -155,7 +155,7 @@ SMODS.Joker {
         G.E_MANAGER:add_event(Event({
           func = (function(t) if G.GAME.chips >  G.GAME.blind.chips then G.STATE = G.STATES.NEW_ROUND 
           G.STATE_COMPLETE = false
-end
+          end
           return true end)
         }))
         
@@ -166,4 +166,72 @@ end
       return { vars = { G.GAME.round_resets.jam_last_chips or 0 } }
     end,
     blueprint_compat = true
+}
+
+SMODS.Joker {
+    key = 'tarlton',
+    config = {
+        extra = 0
+    },
+    loc_txt = {
+        name = "Tarlton",
+        text = {
+          "Copies the effects of",
+          "all other {C:attention}Jokers{}",
+          "In your possession.",
+          "{C:inactive}(must be compatible){}"
+        },
+    },
+    atlas = 'Jokers',
+    pos = {
+      x = 1,
+      y = 2
+    },
+    soul_pos = {
+      x = 9,
+      y = 3
+    },
+    rarity = 4,
+    cost = 20,
+    calculate = function(self, card, context)
+      if not context.blueprint then
+        local other_joker = nil
+        local final_ret = nil
+        for i=1,#G.jokers.cards do
+            other_joker = G.jokers.cards[i]
+            if other_joker and other_joker.ability.name ~= card.ability.name and other_joker.config.center.blueprint_compat then
+                context.blueprint_card = card
+                context.blueprint = 1
+                local other_joker_ret = other_joker:calculate_joker(context)
+            end
+        end
+        if final_ret then
+            return final_ret
+        end
+      end
+    end,
+    blueprint_compat = false
+}
+
+SMODS.Joker {
+    key = 'greedy_pot',
+    loc_txt = {
+        name = 'Greedy Pot',
+        text = {
+          "After play or discard, always draw", 
+          "{C:attention}#1# more{} cards than you would otherwise.",
+        }
+    },
+    config = {extra = 2},
+    atlas = 'Jokers',
+    pos = {
+        x = 6,
+        y = 1
+    },
+    rarity = 3,
+    cost = 10,
+    loc_vars = function(self, info_queue, center)
+      return { vars = { center.ability.extra } }
+    end,
+    blueprint_compat = false
 }

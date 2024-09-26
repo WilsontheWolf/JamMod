@@ -36,3 +36,19 @@ payload = '''
 G.GAME.round_resets.jam_last_chips = math.floor(hand_chips*mult)
 '''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''if G.GAME.blind.name == 'The Serpent' and'''
+position = "before"
+payload = '''
+local jam_pot_extra = 0
+for _, j in ipairs(find_joker("j_jam_greedy_pot")) do
+    jam_pot_extra = jam_pot_extra + j.ability.extra
+end
+if jam_pot_extra and G.GAME.current_round.hands_played > 0 or G.GAME.current_round.discards_used > 0 then
+    hand_space = math.min(#G.deck.cards, hand_space + jam_pot_extra)
+end
+'''
+match_indent = true
