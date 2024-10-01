@@ -28,5 +28,11 @@ jd_def["j_jam_greedy_pot"] = {
     },
     text_config = { colour = G.C.IMPORTANT },
 }
-
 jd_def["j_jam_all_ones"] = {}
+jd_def["j_jam_brownie"] = {
+    reminder_text = {
+        { text = "(" },
+        { ref_table = "card.ability.extra", ref_value = "retriggers" },
+        { text = ")" },
+    },
+}

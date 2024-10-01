@@ -266,3 +266,79 @@ SMODS.Joker {
     end,
     blueprint_compat = false
 }
+
+SMODS.Joker {
+    key = 'brownie',
+    config = {
+        extra = {
+          retriggers = 2,
+          retriggers_mod = 1,
+        }
+    },
+    loc_txt = {
+        name = "Two-Bite Brownie",
+        text = {
+          "Retrigger each played {C:attention}2{}",
+          "{C:attention}#1#{} times",
+          "{C:attention}-#2#{} per round played",
+        },
+    },
+    atlas = 'Jokers',
+    pos = {
+      x = 0,
+      y = 0
+    },
+    rarity = 1,
+    cost = 4,
+    calculate = function(self, card, context)
+      if context.repetition and context.cardarea == G.play then
+        if context.other_card:get_id() == 2 then 
+          return {
+              message = localize('k_again_ex'),
+              repetitions = card.ability.extra.retriggers,
+              card = card
+          }
+        end
+      end
+      if not context.blueprint and context.end_of_round and not context.repetition and not context.individual then
+        if card.ability.extra.retriggers - card.ability.extra.retriggers_mod <= 0 then
+          G.E_MANAGER:add_event(Event({
+              func = function()
+                  play_sound('tarot1')
+                  card.T.r = -0.2
+                  card:juice_up(0.3, 0.4)
+                  card.states.drag.is = true
+                  card.children.center.pinch.x = true
+                  G.E_MANAGER:add_event(Event({
+                      trigger = 'after',
+                      delay = 0.3,
+                      blockable = false,
+                      func = function()
+                          G.jokers:remove_card(card)
+                          card:remove()
+                          card = nil
+                          return true;
+                      end
+                  }))
+                  return true
+              end
+          }))
+          return {
+              message = localize('k_eaten_ex'),
+              colour = G.C.IMPORTANT
+          }
+      else
+          card.ability.extra.retriggers = card.ability.extra.retriggers - card.ability.extra.retriggers_mod
+          return {
+              message = tostring(card.ability.extra.retriggers),
+              colour = G.C.IMPORTANT
+          }
+      end
+
+      end
+    end,
+    loc_vars = function(self, info_queue, center)
+      return { vars = { center.ability.extra.retriggers, center.ability.extra.retriggers_mod } }
+    end,
+    blueprint_compat = true
+}
