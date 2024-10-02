@@ -5,6 +5,7 @@
 --- MOD_DESCRIPTION: JellyMod for modern SMODS
 --- DEPENDENCIES: [Steamodded>=1.0.0~ALPHA-0919a]
 --- PREFIX: jam
+--- BADGE_COLOUR: 7F0000
 if JokerDisplay then
     assert(SMODS.load_file("joker_display_definitions.lua"))()
 end
@@ -339,6 +340,57 @@ SMODS.Joker {
     end,
     loc_vars = function(self, info_queue, center)
       return { vars = { center.ability.extra.retriggers, center.ability.extra.retriggers_mod } }
+    end,
+    blueprint_compat = true
+}
+
+SMODS.Joker {
+    key = 'buckleswasher',
+    config = {
+        extra = {
+            mult = 1,
+            mult_mod = 0.1
+        }
+    },
+    loc_txt = {
+        name = "Buckleswasher",
+        text = {
+          "Gives {X:mult,C:white}X#2#{} Mult",
+          "for each owned {C:attention}Joker{}",
+          " {C:red,E:1,S:0.3}right{} of this card",
+          "{C:inactive}(Currently {X:mult,C:white}X#1#{C:inactive} Mult)",
+        }
+    },
+    atlas = 'Jokers',
+    pos = {
+        x = 3,
+        y = 3
+    },
+    rarity = 2,
+    cost = 4,
+    calculate = function(self, card, context)
+      if context.joker_main and card.ability.extra.mult > 1 then
+        return {
+          message = localize{type='variable',key='a_xmult',vars={card.ability.extra.mult}},
+          Xmult_mod = card.ability.extra.mult, 
+          colour = G.C.MULT
+        }
+      end
+    end,
+    update = function(self, card, dt)
+      local sell_cost = 0
+      for i = #G.jokers.cards, 1, -1 do
+          if G.jokers.cards[i] == card or (card.area and (card.area ~= G.jokers)) then
+              break
+          end
+          sell_cost = sell_cost + G.jokers.cards[i].sell_cost
+      end
+      card.ability.extra.mult = 1 + math.max(0, sell_cost) * card.ability.extra.mult_mod
+    end, 
+    loc_vars = function(self, info_queue, center)
+        return {
+            vars = {center.ability.extra.mult, center.ability.extra.mult_mod}
+        }
     end,
     blueprint_compat = true
 }

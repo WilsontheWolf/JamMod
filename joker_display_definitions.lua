@@ -36,3 +36,13 @@ jd_def["j_jam_brownie"] = {
         { text = ")" },
     },
 }
+jd_def["j_jam_buckleswasher"] = {
+    text = {
+        {
+            border_nodes = {
+                { text = "X" },
+                { ref_table = "card.ability.extra", ref_value = "mult", retrigger_type = "exp" }
+            }
+        }
+    },
+}
