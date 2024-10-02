@@ -355,9 +355,9 @@ SMODS.Joker {
     loc_txt = {
         name = "Buckleswasher",
         text = {
-          "Gives {X:mult,C:white}X#2#{} Mult",
-          "for each owned {C:attention}Joker{}",
-          " {C:red,E:1,S:0.3}right{} of this card",
+          "Gives {X:mult,C:white}X#2#{} Mult per {C:money}${} of",
+          "sell value of each owned",
+          "{C:attention}Joker{} {C:red,E:1,S:0.3}right{} of this card",
           "{C:inactive}(Currently {X:mult,C:white}X#1#{C:inactive} Mult)",
         }
     },
