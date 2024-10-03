@@ -416,8 +416,8 @@ SMODS.Joker {
         x = 9,
         y = 2
     },
-    rarity = 1,
-    cost = 8,
+    rarity = 2,
+    cost = 5,
     calculate = function(self, card, context)
         if context.selling_self and (G.STATE == G.STATES.SELECTING_HAND or G.STATE == G.STATES.DRAW_TO_HAND) then
             G.E_MANAGER:add_event(Event({
