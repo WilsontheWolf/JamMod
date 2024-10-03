@@ -52,3 +52,18 @@ if jam_pot_extra and G.GAME.current_round.hands_played > 0 or G.GAME.current_rou
 end
 '''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = '''G.STATE = G.STATES.NEW_ROUND'''
+position = "after"
+payload = '''
+local scouters = SMODS.find_card("j_jam_scouter")
+if G.GAME.current_round.hands_left < 1 and next(scouters) then
+    G.STATE = G.STATES.DRAW_TO_HAND
+    scouters[1]:sell_card()
+end
+'''
+match_indent = true
+

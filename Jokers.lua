@@ -109,7 +109,8 @@ SMODS.Joker {
       }
       return { vars = { center.ability.extra } }
     end,
-    blueprint_compat = true
+    blueprint_compat = true,
+    eternal_compat = false
 }
 
 SMODS.Joker {
@@ -166,7 +167,8 @@ SMODS.Joker {
     loc_vars = function(self, info_queue, card)
       return { vars = { G.GAME.round_resets.jam_last_chips or 0 } }
     end,
-    blueprint_compat = true
+    blueprint_compat = true,
+    eternal_compat = false,
 }
 
 SMODS.Joker {
@@ -341,7 +343,8 @@ SMODS.Joker {
     loc_vars = function(self, info_queue, center)
       return { vars = { center.ability.extra.retriggers, center.ability.extra.retriggers_mod } }
     end,
-    blueprint_compat = true
+    blueprint_compat = true,
+    eternal_compat = false,
 }
 
 SMODS.Joker {
@@ -393,4 +396,60 @@ SMODS.Joker {
         }
     end,
     blueprint_compat = true
+}
+
+SMODS.Joker {
+    key = 'scouter',
+    config = {
+        extra = 0
+    },
+    loc_txt = {
+        name = "Scouter",
+        text = {
+          "Sell this card to {C:attention}undo{}",
+          "the last played hand.",
+          "{C:inactive}(auto sells on death){}",
+        }
+    },
+    atlas = 'Jokers',
+    pos = {
+        x = 9,
+        y = 2
+    },
+    rarity = 1,
+    cost = 8,
+    calculate = function(self, card, context)
+        if context.selling_self and (G.STATE == G.STATES.SELECTING_HAND or G.STATE == G.STATES.DRAW_TO_HAND) then
+            G.E_MANAGER:add_event(Event({
+                func = function()
+                  ease_hands_played(1)
+                    card_eval_status_text(card, 'extra', nil, nil, nil, {
+                        message = "Undo"
+                    });
+                    return true
+                end
+            }))
+
+            G.E_MANAGER:add_event(Event({
+                blocking = true,
+                trigger = 'ease',
+                ref_table = G.GAME,
+                ref_value = 'chips',
+                ease_to = G.GAME.chips - math.floor(G.GAME.round_resets.jam_last_chips or 0), -- Going into debt on the first hand is intentional
+                delay = 0.2,
+                func = (function(t)
+                    return math.floor(t)
+                end)
+            }))
+
+            return nil, true
+        end
+    end,
+    loc_vars = function(self, info_queue, card)
+        return {
+            vars = {G.GAME.round_resets.jam_last_chips or 0}
+        }
+    end,
+    blueprint_compat = true,
+    eternal_compat = false,
 }
