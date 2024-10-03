@@ -453,3 +453,40 @@ SMODS.Joker {
     blueprint_compat = true,
     eternal_compat = false,
 }
+
+SMODS.Joker {
+    key = 'pierrot',
+    loc_txt = {
+        name = 'Pierrot',
+        text = {
+          "Allows for {C:attention}+#1#{} card to",
+          "be selected and played"
+        }
+    },
+    config = {
+        extra = 1
+    },
+    atlas = 'Jokers',
+    pos = {
+        x = 5,
+        y = 2
+    },
+    soul_pos = {
+        x = 8,
+        y = 3
+    },
+    rarity = 4,
+    cost = 20,
+    add_to_deck = function(self, card, from_debuff)
+        G.hand.config.highlighted_limit = G.hand.config.highlighted_limit + card.ability.extra
+    end,
+    remove_from_deck = function(self, card, from_debuff)
+        G.hand.config.highlighted_limit = G.hand.config.highlighted_limit - card.ability.extra
+    end,
+    loc_vars = function(self, info_queue, card)
+        return {
+            vars = {card.ability.extra}
+        }
+    end,
+    blueprint_compat = false
+}

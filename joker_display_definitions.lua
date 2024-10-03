@@ -46,3 +46,5 @@ jd_def["j_jam_buckleswasher"] = {
         }
     },
 }
+jd_def["j_jam_scouter"] = {}
+jd_def["j_jam_pierrot"] = {}
