@@ -381,6 +381,7 @@ SMODS.Joker {
       end
     end,
     update = function(self, card, dt)
+      if G.STAGE ~= G.STAGES.RUN then return end
       local sell_cost = 0
       for i = #G.jokers.cards, 1, -1 do
           if G.jokers.cards[i] == card or (card.area and (card.area ~= G.jokers)) then
@@ -490,3 +491,37 @@ SMODS.Joker {
     end,
     blueprint_compat = false
 }
+
+SMODS.Joker {
+    key = 'deposit',
+    config = {
+        extra = {
+            retriggers = 1,
+        }
+    },
+    loc_txt = {
+        name = "Mineral Deposit",
+        text = {
+          "Retriggers all cards that have",
+          "{C:attention}no rank or suit{}",
+        }
+    },
+    atlas = 'Jokers',
+    pos = {
+        x = 1,
+        y = 0
+    },
+    rarity = 2,
+    cost = 5,
+    calculate = function(self, card, context)
+        if context.repetition and context.cardarea == G.play and context.other_card:get_id() <= -100 then
+            return {
+                message = localize('k_again_ex'),
+                repetitions = card.ability.extra.retriggers,
+                card = card
+            }
+        end
+    end,
+    blueprint_compat = true
+}
+
