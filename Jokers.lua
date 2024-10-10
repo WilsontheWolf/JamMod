@@ -10,6 +10,12 @@ if JokerDisplay then
     assert(SMODS.load_file("joker_display_definitions.lua"))()
 end
 
+SMODS.Atlas({
+    key = "modicon",
+    path = "modicon.png",
+    px = 32,
+    py = 32
+})
 
 SMODS.Atlas {
   key = "Jokers",
