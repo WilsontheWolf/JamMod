@@ -35,6 +35,11 @@ jd_def["j_jam_brownie"] = {
         { ref_table = "card.ability.extra", ref_value = "retriggers" },
         { text = ")" },
     },
+    retrigger_function = function(playing_card, scoring_hand, held_in_hand, joker_card)
+        if held_in_hand then return 0 end
+        return (playing_card:get_id() == 2) and
+            joker_card.ability.extra.retriggers * JokerDisplay.calculate_joker_triggers(joker_card) or 0
+    end
 }
 jd_def["j_jam_buckleswasher"] = {
     text = {
@@ -48,3 +53,14 @@ jd_def["j_jam_buckleswasher"] = {
 }
 jd_def["j_jam_scouter"] = {}
 jd_def["j_jam_pierrot"] = {}
+jd_def["j_jam_deposit"] = {
+        reminder_text = {
+            { text = "(no rank or suit)" },
+        },
+        retrigger_function = function(playing_card, scoring_hand, held_in_hand, joker_card)
+            if held_in_hand then return 0 end
+            return (playing_card:get_id() <= -100) and
+                1 * JokerDisplay.calculate_joker_triggers(joker_card) or 0
+        end
+}
+jd_def["j_jam_safari"] = {}

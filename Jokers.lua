@@ -525,3 +525,21 @@ SMODS.Joker {
     blueprint_compat = true
 }
 
+SMODS.Joker {
+    key = 'safari',
+    loc_txt = {
+        name = 'Safari Joker',
+        text = {
+          "{C:attention}All cards{} are considered",
+          "all suits",
+        }
+    },
+    atlas = 'Jokers',
+    pos = {
+        x = 4,
+        y = 2
+    },
+    rarity = 3,
+    cost = 7,
+    blueprint_compat = false
+}

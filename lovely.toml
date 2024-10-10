@@ -76,3 +76,15 @@ payload = '''
 if #G.hand.highlighted <= 0 or G.GAME.blind.block_play or #G.hand.highlighted > G.hand.config.highlighted_limit then
 '''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if flush_calc then'''
+position = "before"
+payload = '''
+if next(SMODS.find_card("j_jam_safari")) and (not self.debuff or bypass_debuff) then
+    return true
+end
+'''
+match_indent = true
