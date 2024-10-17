@@ -5,7 +5,7 @@
 --- MOD_DESCRIPTION: JellyMod for modern SMODS
 --- DEPENDENCIES: [Steamodded>=1.0.0~ALPHA-0919a]
 --- PREFIX: jam
---- BADGE_COLOUR: 7F0000
+--- BADGE_COLOUR: DE0000
 if JokerDisplay then
     assert(SMODS.load_file("joker_display_definitions.lua"))()
 end
@@ -390,7 +390,7 @@ SMODS.Joker {
       if G.STAGE ~= G.STAGES.RUN then return end
       local sell_cost = 0
       for i = #G.jokers.cards, 1, -1 do
-          if G.jokers.cards[i] == card or (card.area and (card.area ~= G.jokers)) then
+          if G.jokers.cards[i] == card or (G.jokers.cards[i].area and (G.jokers.cards[i].area ~= G.jokers)) then
               break
           end
           sell_cost = sell_cost + G.jokers.cards[i].sell_cost
@@ -548,4 +548,61 @@ SMODS.Joker {
     rarity = 3,
     cost = 7,
     blueprint_compat = false
+}
+
+SMODS.Joker {
+    key = 'collector',
+    config = {
+        extra = {
+            mult = 1,
+            mult_mod = 1.5
+        }
+    },
+    loc_txt = {
+        name = "The Collector",
+        text = {
+          "This Joker gains {X:mult,C:white} X#1# {} Mult",
+          "for each {C:attention}Joker{}",
+          "with an {C:attention}Edition{}",
+          "{C:inactive}(Currently {X:mult,C:white} X#2# {C:inactive} Mult)",
+        }
+    },
+    atlas = 'Jokers',
+    pos = {
+        x = 2,
+        y = 3
+    },
+    rarity = 3,
+    cost = 7,
+    calculate = function(self, card, context)
+        if context.joker_main and card.ability.extra.mult > 1 then
+            return {
+                message = localize {
+                    type = 'variable',
+                    key = 'a_xmult',
+                    vars = {card.ability.extra.mult}
+                },
+                Xmult_mod = card.ability.extra.mult,
+                colour = G.C.MULT
+            }
+        end
+    end,
+    update = function(self, card, dt)
+        if G.STAGE ~= G.STAGES.RUN then
+            return
+        end
+        local enhanced = 0
+        for i = #G.jokers.cards, 1, -1 do
+            if G.jokers.cards[i].area and (G.jokers.cards[i].area == G.jokers) and G.jokers.cards[i].edition then
+                enhanced = enhanced + 1
+            end
+        end
+        card.ability.extra.mult = 1 + math.max(0, enhanced) * card.ability.extra.mult_mod
+    end,
+    loc_vars = function(self, info_queue, center)
+        return {
+            vars = {center.ability.extra.mult_mod, center.ability.extra.mult}
+        }
+    end,
+    blueprint_compat = true
 }

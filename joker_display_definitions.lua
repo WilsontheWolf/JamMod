@@ -64,3 +64,13 @@ jd_def["j_jam_deposit"] = {
         end
 }
 jd_def["j_jam_safari"] = {}
+jd_def["j_jam_collector"] = {
+    text = {
+        {
+            border_nodes = {
+                { text = "X" },
+                { ref_table = "card.ability.extra", ref_value = "mult", retrigger_type = "exp" }
+            }
+        }
+    },
+}
