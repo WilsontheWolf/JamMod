@@ -64,12 +64,12 @@ SMODS.Joker {
 
 SMODS.Joker {
     key = 'pessimist',
-    config = {extra = 2},
+    config = {extra = 1},
     loc_txt = {
         name = 'Pessimist',
         text = {
           "Sell this card to apply",
-          "{C:dark_edition}negative{} to a random Joker.",
+          "{C:dark_edition}Negative{} to a random Joker.",
           "Permanent {C:blue}-#1#{} hands.",
           "{C:inactive}({C:attention}Destroys{C:inactive} itself when blind selected){}"
         }
@@ -94,7 +94,10 @@ SMODS.Joker {
         end
         local eligible_card = pseudorandom_element(eligible, pseudoseed("jam_pessimist"))
         eligible_card:set_edition({negative = true}, true)
-        G.hand:change_size(-card.ability.extra)
+        G.GAME.round_resets.hands = G.GAME.round_resets.hands - card.ability.extra
+        if G.GAME.current_round.hands_played == 0 then
+          ease_hands_played(-card.ability.extra)
+        end
         return nil, true
       elseif context.setting_blind and not self.getting_sliced and not context.blueprint then
         G.E_MANAGER:add_event(
@@ -109,7 +112,7 @@ SMODS.Joker {
     end,
     loc_vars = function(self, info_queue, center)
       info_queue[#info_queue + 1] = {
-        key = 'e_negative_consumable', 
+        key = 'e_negative', 
         set = 'Edition',
         config = {extra = 1}
       }
