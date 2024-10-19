@@ -88,3 +88,29 @@ if next(SMODS.find_card("j_jam_safari")) and (not self.debuff or bypass_debuff) 
 end
 '''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''self.sell_cost_label = self.facing == 'back' and '?' or self.sell_cost'''
+position = "after"
+payload = '''
+if self.ability and self.ability.jam_greener_pastures then
+    self.cost = 0
+    self.sell_cost = 0
+end'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = '''if specific_vars and specific_vars.pinned then info_queue[#info_queue+1] = {key = 'pinned_left', set = 'Other'} end'''
+position = "before"
+payload = '''
+if card and card.ability and card.ability.jam_greener_pastures then
+    info_queue[#info_queue + 1] = {
+        key = 'jam_greener_pastures_note', 
+        set = 'Other'
+    }
+end'''
+match_indent = true

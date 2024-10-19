@@ -10,6 +10,18 @@ if JokerDisplay then
     assert(SMODS.load_file("joker_display_definitions.lua"))()
 end
 
+SMODS.current_mod.process_loc_text = function() 
+  G.localization.descriptions.Other.jam_greener_pastures_note = {
+    name = "Greener Pastures",
+    text = {
+      "Sells for {C:money}$0{},",
+      "destroyed when",
+      "{C:attention}Blind{} is selected"
+    }
+  }
+end
+
+
 SMODS.Atlas({
     key = "modicon",
     path = "modicon.png",
@@ -606,6 +618,58 @@ SMODS.Joker {
         return {
             vars = {center.ability.extra.mult_mod, center.ability.extra.mult}
         }
+    end,
+    blueprint_compat = true
+}
+
+SMODS.Joker {
+    key = 'greener_pastures',
+    config = {
+        extra = {
+            mult = 1,
+            mult_mod = 1.5
+        }
+    },
+    loc_txt = {
+        name = "Greener Pastures",
+        text = {
+          "When {C:attention}Blind{} is selected",
+          "create a random {C:dark_edition}Negative{} Joker",
+          "that always sells for {C:money}$0{} and is",
+          "destroyed when blind is selected",
+        }
+    },
+    atlas = 'Jokers',
+    pos = {
+        x = 5,
+        y = 3
+    },
+    rarity = 2,
+    cost = 8,
+    calculate = function(self, card, context)
+        if context.setting_blind and G.jokers.config.card_limit >= G.jokers.config.card_count then
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+            local new_card = SMODS.create_card({
+              area = G.jokers,
+              set = "Joker",
+              legendary = false,
+              key = os.date("%d%m") == "0104" and 'j_jam_greener_pastures' or nil,
+              key_append = 'jam_greener_pastures',
+              no_edition = true,
+              edition = 'e_negative'
+            })
+            new_card.ability.jam_greener_pastures = true
+            new_card:add_to_deck()
+            G.jokers:emplace(new_card)
+            return true end }))
+        end
+    end,
+    loc_vars = function(self, info_queue, center)
+      info_queue[#info_queue + 1] = {
+        key = 'e_negative', 
+        set = 'Edition',
+        config = {extra = 1}
+      }
     end,
     blueprint_compat = true
 }
