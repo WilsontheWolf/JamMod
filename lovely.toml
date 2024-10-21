@@ -3,7 +3,7 @@ version = "1.0.0"
 dump_lua = true
 priority = 0
 
-[[patches]]
+[[patches]] # Double Vision, make cards 2's
 [patches.pattern]
 target = "card.lua"
 pattern = '''function Card:get_id()'''
@@ -15,7 +15,7 @@ end
 '''
 match_indent = true
 
-[[patches]]
+[[patches]] # Prosopagnosia make cards not faces
 [patches.pattern]
 target = "card.lua"
 pattern = '''function Card:is_face(from_boss)'''
@@ -27,7 +27,7 @@ end
 '''
 match_indent = true
 
-[[patches]]
+[[patches]] # Store the last scored chips, used for one more time and scouter
 [patches.pattern]
 target = "functions/state_events.lua"
 pattern = '''if hand_chips*mult > 0 then'''
@@ -37,7 +37,7 @@ G.GAME.round_resets.jam_last_chips = math.floor(hand_chips*mult)
 '''
 match_indent = true
 
-[[patches]]
+[[patches]] # Greedy Pot extra cards
 [patches.pattern]
 target = "functions/state_events.lua"
 pattern = '''if G.GAME.blind.name == 'The Serpent' and'''
@@ -53,7 +53,7 @@ end
 '''
 match_indent = true
 
-[[patches]]
+[[patches]] # Scouter sell when about to lose
 [patches.pattern]
 target = "game.lua"
 pattern = '''G.STATE = G.STATES.NEW_ROUND'''
@@ -67,7 +67,7 @@ end
 '''
 match_indent = true
 
-[[patches]]
+[[patches]] # Make the play button work with more than 5 cards selected (Pierrot)
 [patches.pattern]
 target = "functions/button_callbacks.lua"
 pattern = '''if #G.hand.highlighted <= 0 or G.GAME.blind.block_play or #G.hand.highlighted > 5 then'''
@@ -77,7 +77,7 @@ if #G.hand.highlighted <= 0 or G.GAME.blind.block_play or #G.hand.highlighted > 
 '''
 match_indent = true
 
-[[patches]]
+[[patches]] # Safari joker all suits
 [patches.pattern]
 target = "card.lua"
 pattern = '''if flush_calc then'''
@@ -89,7 +89,7 @@ end
 '''
 match_indent = true
 
-[[patches]]
+[[patches]] # Greener pastures created card sell cost
 [patches.pattern]
 target = "card.lua"
 pattern = '''self.sell_cost_label = self.facing == 'back' and '?' or self.sell_cost'''
@@ -101,10 +101,10 @@ if self.ability and self.ability.jam_greener_pastures then
 end'''
 match_indent = true
 
-[[patches]]
+[[patches]] # Greener pastures spawned card hover tooltip
 [patches.pattern]
 target = "functions/common_events.lua"
-pattern = '''if specific_vars and specific_vars.pinned then info_queue[#info_queue+1] = {key = 'pinned_left', set = 'Other'} end'''
+pattern = '''if _c.set == 'Other' then'''
 position = "before"
 payload = '''
 if card and card.ability and card.ability.jam_greener_pastures then
@@ -112,5 +112,19 @@ if card and card.ability and card.ability.jam_greener_pastures then
         key = 'jam_greener_pastures_note', 
         set = 'Other'
     }
+end'''
+match_indent = true
+
+[[patches]] # Greener pastures card destroyed
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''G.jokers.cards[i]:calculate_joker({setting_blind = true, blind = G.GAME.round_resets.blind})'''
+position = "after"
+payload = '''
+do
+    local card = G.jokers.cards[i]
+    if card and card.ability and card.ability.jam_greener_pastures then
+        card:start_dissolve()
+    end
 end'''
 match_indent = true
