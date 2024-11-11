@@ -659,6 +659,7 @@ SMODS.Joker {
               edition = 'e_negative'
             })
             new_card.ability.jam_greener_pastures = true
+            new_card:set_cost()
             new_card:add_to_deck()
             G.jokers:emplace(new_card)
             return true end }))
@@ -672,4 +673,55 @@ SMODS.Joker {
       }
     end,
     blueprint_compat = true
+}
+
+SMODS.Joker {
+  key = 'hatter',
+  config = {},
+  loc_txt = {
+      name = "Mad Hatter",
+      text = {
+        "{C:green,E:1,S:0.7}Shuffles{} the {C:attention}Enhancements{},",
+        "{C:attention}Seals{}, and {C:attention}Editions{}",
+        "of played hand",
+    },
+  },
+  atlas = 'Jokers',
+  pos = {
+      x = 4,
+      y = 3
+  },
+  rarity = 2,
+  cost = 7,
+  calculate = function(self, card, context)
+      if context.before and not context.blueprint then
+          local enhancements = {}
+          local seals = {}
+          local editions = {}
+          for k, v in ipairs(context.full_hand) do
+              enhancements[k] = v.config.center
+              -- shuffling doesn't like empty values
+              seals[k] = v.seal or "jam_placeholder"
+              editions[k] = v.edition or "jam_placeholder"
+          end
+          pseudoshuffle(enhancements, pseudoseed('jam_hatter'))
+          pseudoshuffle(seals, pseudoseed('jam_hatter'))
+          pseudoshuffle(editions, pseudoseed('jam_hatter'))
+          card:juice_up()
+          for k, v in ipairs(context.full_hand) do
+              if seals[k] == "jam_placeholder" then
+                  seals[k] = nil
+              end
+              v:set_seal(seals[k], false, true)
+              if editions[k] == "jam_placeholder" then
+                  editions[k] = nil
+              end
+              v:set_edition(editions[k], false, true)
+              v:set_ability(enhancements[k], nil, false)
+              v:juice_up()
+          end
+          
+      end
+  end,
+  blueprint_compat = false
 }

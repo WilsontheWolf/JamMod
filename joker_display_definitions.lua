@@ -74,3 +74,5 @@ jd_def["j_jam_collector"] = {
         }
     },
 }
+jd_def["j_jam_greener_pastures"] = {}
+jd_def["j_jam_hatter"] = {}
