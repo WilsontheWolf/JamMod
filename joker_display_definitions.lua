@@ -76,3 +76,13 @@ jd_def["j_jam_collector"] = {
 }
 jd_def["j_jam_greener_pastures"] = {}
 jd_def["j_jam_hatter"] = {}
+jd_def["j_jam_edition_eater"] = {
+    text = {
+        {
+            border_nodes = {
+                { text = "X" },
+                { ref_table = "card.ability.extra", ref_value = "Xmult", retrigger_type = "exp" }
+            }
+        }
+    },
+}
