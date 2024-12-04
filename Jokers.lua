@@ -725,3 +725,68 @@ SMODS.Joker {
   end,
   blueprint_compat = false
 }
+
+SMODS.Joker {
+    key = 'edition_eater',
+config = {
+        extra = {
+            max_mod = 2,
+            Xmult = 1
+        }
+    },
+    loc_txt = {
+        name = "Edition Eater",
+        text = {
+            "When {C:attention}Blind{} is selected remove the",
+            "edition of the joker to the right.",
+            "Add up to {X:mult,C:white}X#1#{} Mult per edition eaten.",
+            "{C:inactive}(Depends on rarity of edition)",
+            "{C:inactive}(Currently {}{X:mult,C:white}X#2#{}{C:inactive} Mult)",
+        },
+    },
+    atlas = 'Jokers',
+    pos = {
+        x = 4,
+        y = 1
+    },
+    rarity = 2,
+    cost = 8,
+    calculate = function(self, card, context)
+        if context.setting_blind and not card.getting_sliced and not context.blueprint then
+            local my_pos = nil
+            for i = 1, #G.jokers.cards do
+                if G.jokers.cards[i] == card then my_pos = i; break end
+            end
+            local other = G.jokers.cards[my_pos+1]
+            if my_pos and other and not other.getting_sliced and other.edition then
+                local edition
+                for k,v in ipairs(G.P_CENTER_POOLS.Edition) do
+                    if v.key == other.edition.key then
+                        edition = v
+                        break
+                    end
+                end
+                local mod = math.min(card.ability.extra.max_mod, math.floor((card.ability.extra.max_mod * 2) / (((edition and edition.weight or 10) / 15) + 1)) / 2 + .5)
+                G.E_MANAGER:add_event(Event({func = function()
+                    card.ability.extra.Xmult = card.ability.extra.Xmult + mod
+                    card:juice_up(0.8, 0.8)
+                    other:set_edition(nil, true)
+                    card_eval_status_text(card, 'extra', nil, nil, nil, {message = localize{type = 'variable', key = 'a_xmult', vars = {card.ability.extra.Xmult}}, no_juice = true})
+                    return true end 
+                }))
+            end
+        end
+        if context.joker_main and card.ability.extra.Xmult > 1 then
+            return {
+                message = localize{type='variable',key='a_xmult',vars={card.ability.extra.Xmult}},
+                Xmult_mod = card.ability.extra.Xmult
+            }
+        end
+    end,
+    loc_vars = function(self, info_queue, center)
+        return {
+            vars = {center.ability.extra.max_mod, center.ability.extra.Xmult}
+        }
+    end,
+    blueprint_compat = true
+}
