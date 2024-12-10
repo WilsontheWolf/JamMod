@@ -30,28 +30,28 @@ SMODS.Atlas({
 })
 
 SMODS.Atlas {
-  key = "Jokers",
-  path = "Jokers.png",
-  px = 71,
-  py = 95
+    key = "Jokers",
+    path = "Jokers.png",
+    px = 71,
+    py = 95
 }
 
 
 SMODS.Joker {
-  key = 'double_vision',
-  loc_txt = {
-    name = 'Double Vision',
-    text = {
-      "All cards are",
-      "considered",
-      "{C:attention}2s{}",
-    }
-  },
-  atlas = 'Jokers',
-  pos = { x = 8, y = 2 },
-  rarity = 3,
-  cost = 10,
-  blueprint_compat = false
+    key = 'double_vision',
+    loc_txt = {
+        name = 'Double Vision',
+        text = {
+        "All cards are",
+        "considered",
+        "{C:attention}2s{}",
+        }
+    },
+    atlas = 'Jokers',
+    pos = { x = 8, y = 2 },
+    rarity = 3,
+    cost = 10,
+    blueprint_compat = false
 }
 
 SMODS.Joker {
@@ -728,7 +728,7 @@ SMODS.Joker {
 
 SMODS.Joker {
     key = 'edition_eater',
-config = {
+    config = {
         extra = {
             max_mod = 2,
             Xmult = 1
@@ -788,5 +788,63 @@ config = {
             vars = {center.ability.extra.max_mod, center.ability.extra.Xmult}
         }
     end,
+    blueprint_compat = true
+}
+
+SMODS.Joker {
+    key = 'special_snowflake',
+    config = {
+        extra = {
+            mod = 0.2,
+            mult = 1
+        }
+    },
+    loc_txt = {
+        name = "Special Snowflake",
+        text = {
+          "This Joker gains {X:mult,C:white} X#1# {} Mult",
+          "for each {C:attention}Uniquely enhanced card",
+          "in your full deck",
+          "{C:inactive}(ex: {C:green}gold, gold with red seal, steel, etc.{}{C:inactive})",
+          "{C:inactive}(Currently {X:mult,C:white} X#2# {C:inactive} Mult)",
+        },
+    },
+    atlas = 'Jokers',
+    pos = {
+        x = 6,
+        y = 3
+    },
+    soul_pos = {
+      x = 7,
+      y = 3
+    },
+    rarity = 2,
+    cost = 6,
+    calculate = function(self, card, context)
+        if context.joker_main and card.ability.extra.mult > 1 then
+            return {
+                message = localize{type='variable',key='a_xmult',vars={card.ability.extra.Xmult}},
+                Xmult_mod = card.ability.extra.Xmult
+            }
+        end
+    end,
+    loc_vars = function(self, info_queue, center)
+        return {
+            vars = {center.ability.extra.mod, center.ability.extra.mult}
+        }
+    end,
+    update = function(self, card, dt)
+        if G.STAGE ~= G.STAGES.RUN then return end
+        local seen = {}
+        local count = 0
+        for k, v in pairs(G.playing_cards) do
+            local str = v.config.center.key .. "," .. (v.seal or "") .. "," .. (v.edition and v.edition.key or "")
+            if str ~= "c_base,," and not seen[str] then
+                seen[str] = true
+                count = count + 1
+            end
+        end
+        card.ability.extra.mult = 1 + math.max(0, count) * card.ability.extra.mod
+    end, 
     blueprint_compat = true
 }

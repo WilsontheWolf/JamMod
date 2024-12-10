@@ -86,3 +86,13 @@ jd_def["j_jam_edition_eater"] = {
         }
     },
 }
+jd_def["j_jam_special_snowflake"] = {
+    text = {
+        {
+            border_nodes = {
+                { text = "X" },
+                { ref_table = "card.ability.extra", ref_value = "mult", retrigger_type = "exp" }
+            }
+        }
+    },
+}
