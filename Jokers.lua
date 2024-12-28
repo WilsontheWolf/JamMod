@@ -658,10 +658,10 @@ SMODS.Joker {
               no_edition = true,
               edition = 'e_negative'
             })
-            new_card.ability.jam_greener_pastures = true
-            new_card:set_cost()
             new_card:add_to_deck()
             G.jokers:emplace(new_card)
+            new_card.ability.jam_greener_pastures = true
+            new_card:set_cost()
             return true end }))
         end
     end,

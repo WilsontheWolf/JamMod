@@ -128,3 +128,16 @@ do
     end
 end'''
 match_indent = true
+
+[[patches]] # Greener pastures card copied (remove greener pastures effect) 
+[patches.pattern]
+target = "card.lua"
+pattern = '''if not self.added_to_deck then'''
+position = "after"
+payload = '''
+if not from_debuff and self.ability.jam_greener_pastures then
+    self.ability.jam_greener_pastures = nil
+    self:set_cost()
+end
+'''
+match_indent = true
