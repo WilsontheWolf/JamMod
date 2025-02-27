@@ -218,20 +218,30 @@ SMODS.Joker {
     rarity = 4,
     cost = 20,
     calculate = function(self, card, context)
-      if not context.blueprint then
-        local other_joker = nil
-        local final_ret = nil
-        for i=1,#G.jokers.cards do
-            other_joker = G.jokers.cards[i]
-            if other_joker and other_joker.ability.name ~= card.ability.name and other_joker.config.center.blueprint_compat then
-                context.blueprint_card = card
-                context.blueprint = 1
-                local other_joker_ret = other_joker:calculate_joker(context)
+      if context.blueprint then
+        return
+      end
+      local final_ret = nil
+      for _,v in ipairs(G.jokers.cards) do
+        if v.config.center.key ~= card.config.center.key and v.config.center.blueprint_compat then
+          context.blueprint_card = card
+          context.blueprint = 1
+          local other_joker_ret = v:calculate_joker(context)
+          if other_joker_ret then
+            if not final_ret then
+              final_ret = other_joker_ret
+            else
+              local head = final_ret
+              while head.extra do
+                head = head.extra
+              end
+              head.extra = other_joker_ret
             end
+          end
         end
-        if final_ret then
-            return final_ret
-        end
+      end
+      if final_ret then
+        return final_ret
       end
     end,
     blueprint_compat = false
